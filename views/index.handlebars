@@ -1,10 +1,93 @@
+{{!-- // Couldn't get this image to populate  --}}
+<img class="img" src="./public/assets/img/burger.png" alt="burger">
+
+ {{!-- Displaying Burger from SQL  --}}
+<h2>Created Burger:</h2>
+
+<div class="burgerDisplay">
+      <ul>
+        {{#each burgers}}
+          {{#unless this.devoured}}
+               {{this.burger_name}}
+               <button class="devourBurger" data-id={{this.id}} data-devoured="true">
+                 Devour Me!
+               </button>
+          {{/unless}}
+        {{/each}}
+      </ul>
+</div>
+
+
+ {{!-- Displaying Devoured Burgers  --}}
+<h2>Devoured Burgers:</h2>
+
+<div class="devouredBurgerTwo">
+      <ul>
+        {{#each burgers}}
+          {{#if this.devoured}}
+               {{this.burger_name}}
+          {{/if}}
+        {{/each}}
+      </ul>
+</div>
+
+ {{!-- Form to add Burger  --}}
 
 <form class="create-form">
-
   <div class="form-group">
-    <label for="bu">Add a Burger:</label>
     <input type="text" id="bu" name="name">
+    <br>
+  <button type="submit">Submit</button>
+    <br>
+    <label for="bu">Add a Burger</label>
   </div>
-
-  <button type="submit">Add Burger</button>
 </form>
+
+
+
+<script>
+
+// JQuery for creating burger from input box under the Created Burger Category //
+
+$(".create-form").on("submit", function(event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+ 
+    var newBurger = {
+      burger_name: $("#bu").val().trim(),
+      devoured: "0"
+    };
+
+  console.log(newBurger);
+    $.ajax("/", {
+        type: "POST",
+        data: newBurger
+      }).then(
+        function() {
+          location.reload();
+        }
+      );
+    });
+
+// JQuery for moving burger into the Created devoured burger category //
+
+  $(".devourBurger").on("click", function(event) {
+    console.log("works!!!")
+    var id = $(this).data("id");
+    
+    var newBurgerState = {
+      devoured: 1
+    };
+
+    // Send the PUT request.
+    $.ajax("/" + id, {
+      type: "PUT",
+      data: newBurgerState
+    }).then(
+      function() {
+        location.reload();
+      }
+    );
+  });
+
+</script>
